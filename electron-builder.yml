@@ -1,0 +1,92 @@
+appId: com.gumi.desktop
+productName: Gumi
+copyright: Copyright 2026 dakuniri
+directories:
+  output: release
+  buildResources: assets
+files:
+  - dist/**
+  - dist-electron/**
+  - "!dist-electron/system-check.*"
+  - "!dist-electron/*.map"
+  - assets/icons/**
+  - package.json
+  # koffi は使う OS のプリビルドだけを残してサイズを抑える (OS ごとの除外は win / mac の files に書く)
+  - "!node_modules/koffi/build/koffi/{linux,freebsd,openbsd,musl}_*/**"
+  - "!node_modules/koffi/src/**"
+  - "!node_modules/koffi/vendor/**"
+  - "!node_modules/koffi/doc/**"
+asarUnpack:
+  - node_modules/koffi/**
+# macOS はここでアドホック署名する (scripts/after-pack.cjs)
+afterPack: scripts/after-pack.cjs
+extraResources: []
+# Electron 同梱の言語ファイルは日本語と英語だけにしてサイズを抑える
+electronLanguages:
+  - ja
+  - en-US
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+  icon: assets/icons/icon.ico
+  executableName: Gumi
+  requestedExecutionLevel: asInvoker
+  # OS ごとの files は全体の files を置き換えるので、同梱するものをすべて書く
+  files:
+    - dist/**
+    - dist-electron/**
+    - "!dist-electron/system-check.*"
+    - "!dist-electron/*.map"
+    - assets/icons/**
+    - package.json
+    - "!node_modules/koffi/build/koffi/{linux,freebsd,openbsd,musl}_*/**"
+    - "!node_modules/koffi/src/**"
+    - "!node_modules/koffi/vendor/**"
+    - "!node_modules/koffi/doc/**"
+    - "!node_modules/koffi/build/koffi/darwin_*/**"
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: Gumi
+  installerLanguages:
+    - ja_JP
+  language: "1041"
+  artifactName: Gumi-Setup-${version}.${ext}
+  installerIcon: assets/icons/icon.ico
+  uninstallerIcon: assets/icons/icon.ico
+  deleteAppDataOnUninstall: false
+# macOS (dmg)。PC 操作は CoreGraphics + アクセシビリティ API で行う
+# (初回はシステム設定でアクセシビリティと画面収録を Gumi に許可する必要がある)
+mac:
+  target:
+    - target: dmg
+      arch:
+        - arm64
+        - x64
+  icon: assets/icons/icon.png
+  category: public.app-category.productivity
+  # 開発者証明書は使わない。afterPack でアドホック署名する (初回起動時は右クリック -> 開く が必要)
+  identity: null
+  hardenedRuntime: false
+  extendInfo:
+    # Dock にアイコンを出さない (メニューバーのアイコンと円だけで使う)
+    LSUIElement: true
+  files:
+    - dist/**
+    - dist-electron/**
+    - "!dist-electron/system-check.*"
+    - "!dist-electron/*.map"
+    - assets/icons/**
+    - package.json
+    - "!node_modules/koffi/build/koffi/{linux,freebsd,openbsd,musl}_*/**"
+    - "!node_modules/koffi/src/**"
+    - "!node_modules/koffi/vendor/**"
+    - "!node_modules/koffi/doc/**"
+    - "!node_modules/koffi/build/koffi/win32_*/**"
+dmg:
+  artifactName: Gumi-${version}-mac-${arch}.${ext}

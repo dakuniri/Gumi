@@ -1,0 +1,245 @@
+/* ===== Gumi: 白 / 黒の小さな円 ===== */
+.orb-stage {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+}
+
+.orb {
+  /* 円そのものの色 (亜夢のときだけ緑の円に白の記号。中の記号やリングもこの色を使う) */
+  --orb-bg: var(--core-bg, #ffffff);
+  --orb-fg: var(--core-fg, #111111);
+  z-index: 2;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: var(--orb-bg);
+  border: 1.5px solid var(--orb-fg);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.28);
+  cursor: grab;
+  transition: transform 200ms cubic-bezier(.3, 1.5, .5, 1), opacity 400ms ease;
+}
+
+/* 状態リング (前景色)。色ではなく動きで状態を表す */
+.orb-ring {
+  position: absolute;
+  inset: -5px;
+  border-radius: 50%;
+  border: 1.5px solid var(--orb-fg);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.orb--hover {
+  transform: translate(-50%, -50%) scale(1.1);
+}
+.orb--drag {
+  transform: translate(-50%, -50%) scale(1.12);
+  cursor: grabbing;
+}
+.orb--sleep {
+  opacity: 0.45;
+  animation: orb-breathe 4.2s ease-in-out infinite;
+}
+.orb--waking {
+  animation: orb-wake 0.6s ease-out;
+}
+.orb--thinking .orb-ring {
+  opacity: 1;
+  animation: ring-pulse 1.4s ease-in-out infinite;
+}
+.orb--working .orb-ring {
+  opacity: 1;
+  border-color: var(--orb-fg) transparent var(--orb-fg) transparent;
+  animation: ring-spin 1s linear infinite;
+}
+.orb--waiting .orb-ring {
+  opacity: 1;
+  border-style: dashed;
+  animation: ring-spin 4s linear infinite;
+}
+.orb--success .orb-ring {
+  animation: ring-burst 0.9s ease-out 2;
+}
+.orb--error {
+  animation: orb-shake 0.4s ease-in-out 2;
+}
+.orb--error .orb-ring {
+  opacity: 1;
+  border-width: 2.5px;
+}
+
+/* 円の中の記号 (思考中: ? / 実行中: ・・・) */
+.orb-mark {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--orb-fg);
+  pointer-events: none;
+}
+.orb-question {
+  font: 700 1em/1 'Segoe UI', 'Yu Gothic UI', sans-serif;
+  padding-bottom: 0.04em;
+  animation: question-tilt 1.6s ease-in-out infinite;
+}
+.orb--searching .orb-ring {
+  opacity: 1;
+  animation: ring-pulse 1s ease-in-out infinite;
+}
+.orb-search svg {
+  animation: search-look 1.4s ease-in-out infinite;
+}
+@keyframes search-look {
+  0%, 100% { transform: translate(-6%, 0) rotate(-6deg); }
+  50% { transform: translate(6%, 0) rotate(6deg); }
+}
+.orb-check .check-path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: check-draw 0.45s ease-out 0.1s forwards;
+}
+@keyframes check-draw {
+  to { stroke-dashoffset: 0; }
+}
+.no-anim .orb-check .check-path {
+  stroke-dashoffset: 0;
+}
+.orb-dot {
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--orb-fg);
+  animation: dot-bounce 1.05s ease-in-out infinite;
+}
+.orb-dot:nth-child(2) {
+  animation-delay: 0.15s;
+}
+.orb-dot:nth-child(3) {
+  animation-delay: 0.3s;
+}
+@keyframes question-tilt {
+  0%, 100% { transform: rotate(-8deg); }
+  50% { transform: rotate(8deg); }
+}
+@keyframes dot-bounce {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.35; }
+  30% { transform: translateY(-35%); opacity: 1; }
+}
+
+@keyframes orb-breathe {
+  0%, 100% { transform: translate(-50%, -50%) scale(0.96); }
+  50% { transform: translate(-50%, -50%) scale(1.02); }
+}
+@keyframes orb-wake {
+  0% { transform: translate(-50%, -50%) scale(0.9); }
+  60% { transform: translate(-50%, -50%) scale(1.08); }
+  100% { transform: translate(-50%, -50%) scale(1); }
+}
+@keyframes orb-shake {
+  0%, 100% { transform: translate(-50%, -50%); }
+  25% { transform: translate(calc(-50% - 3px), -50%); }
+  75% { transform: translate(calc(-50% + 3px), -50%); }
+}
+@keyframes ring-pulse {
+  0%, 100% { opacity: 0.25; transform: scale(0.94); }
+  50% { opacity: 1; transform: scale(1.04); }
+}
+@keyframes ring-spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes ring-burst {
+  0% { opacity: 1; transform: scale(0.9); }
+  100% { opacity: 0; transform: scale(1.5); }
+}
+
+/* ===== 小さな円 (設定 / 色変更) ===== */
+.bubble {
+  z-index: 3;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  padding: 0;
+  border-radius: 50%;
+  background: var(--orb-bg);
+  border: 1.5px solid var(--orb-fg);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  scale: 0.3;
+  pointer-events: none;
+  /* 閉じているときは円の中心に重なっていて、開くと --tx / --ty の位置へ飛び出す */
+  transform: translate(-50%, -50%);
+  transition:
+    opacity 140ms ease,
+    scale 260ms cubic-bezier(.3, 1.6, .5, 1),
+    transform 300ms cubic-bezier(.25, 1.35, .45, 1),
+    background-color 120ms ease;
+}
+.bubble.open {
+  opacity: 1;
+  scale: 1;
+  pointer-events: auto;
+  transform: translate(calc(-50% + var(--tx)), calc(-50% + var(--ty)));
+}
+.bubble:hover {
+  background: var(--orb-fg);
+}
+.bubble:hover .icon-fill {
+  fill: var(--orb-bg);
+}
+.bubble:hover .icon-hole {
+  fill: var(--orb-fg);
+}
+.bubble:hover .icon-ring {
+  stroke: var(--orb-bg);
+}
+
+.bubble-icon {
+  width: 62%;
+  height: 62%;
+}
+.bubble-icon .icon-fill {
+  fill: var(--orb-fg);
+}
+.bubble-icon .icon-hole {
+  fill: var(--orb-bg);
+}
+.bubble-icon .icon-ring {
+  fill: none;
+  stroke: var(--orb-fg);
+  stroke-width: 1.6;
+}
+
+.no-anim .orb,
+.no-anim .orb *,
+.no-anim .bubble {
+  animation: none !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .orb,
+  .orb * {
+    animation: none !important;
+  }
+}
+
+/* 設定 (歯車) の小さな円: カーソルを合わせると歯車が回る */
+.bubble[data-action='settings'] .bubble-icon {
+  transition: transform 260ms ease;
+}
+.bubble.open[data-action='settings']:hover .bubble-icon {
+  animation: gear-spin 1.6s cubic-bezier(.45, .05, .55, .95) infinite;
+}
+@keyframes gear-spin {
+  0% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(180deg) scale(1.12); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+.no-anim .bubble .bubble-icon {
+  animation: none !important;
+}

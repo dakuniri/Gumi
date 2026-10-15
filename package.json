@@ -1,0 +1,67 @@
+{
+  "name": "gumi",
+  "productName": "Gumi",
+  "version": "0.3.0",
+  "description": "Gumi: a tiny desktop orb that lets an AI operate your Windows / macOS computer (mouse, keyboard, apps, windows, files) with your approval. 小さな円から AI に PC 操作を頼めるデスクトップアシスタント",
+  "author": "dakuniri",
+  "license": "MIT-0",
+  "homepage": "https://github.com/dakuniri/Gumi#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dakuniri/Gumi.git"
+  },
+  "bugs": {
+    "url": "https://github.com/dakuniri/Gumi/issues"
+  },
+  "keywords": [
+    "electron",
+    "ai",
+    "desktop-assistant",
+    "computer-use",
+    "automation",
+    "windows",
+    "macos"
+  ],
+  "private": true,
+  "type": "module",
+  "main": "dist-electron/main.cjs",
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "build:renderer": "vite build",
+    "build:electron": "node scripts/build-electron.mjs",
+    "build": "npm run typecheck && npm run build:renderer && npm run build:electron",
+    "start": "electron .",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:system": "npm run build:electron && electron dist-electron/system-check.cjs",
+    "icons": "node scripts/generate-icons.mjs",
+    "dist": "npm run build && electron-builder --win --x64 --publish never && npm run check:size",
+    "dist:dir": "npm run build && electron-builder --win --x64 --dir",
+    "dist:mac": "npm run build && electron-builder --mac --publish never",
+    "check:size": "node scripts/check-artifact-size.mjs release 500"
+  },
+  "dependencies": {
+    "koffi": "^2.16.3",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.2",
+    "electron": "^44.7.2",
+    "electron-builder": "^26.15.3",
+    "esbuild": "^0.28.2",
+    "typescript": "^5.9.0",
+    "vite": "^8.3.4",
+    "vitest": "^5.0.4"
+  },
+  "allowScripts": {
+    "koffi@2.16.3": true,
+    "esbuild@0.28.2": true,
+    "electron-winstaller@5.4.0": true
+  }
+}

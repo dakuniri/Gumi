@@ -1,0 +1,4 @@
+# 改行は LF に統一する (Windows でも LF のまま扱う)
+* text=auto eol=lf
+*.ico binary
+*.png binary

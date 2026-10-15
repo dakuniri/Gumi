@@ -1,0 +1,183 @@
+.field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 0;
+}
+.field + .field {
+  border-top: 1px solid var(--line);
+}
+.field.disabled {
+  opacity: 0.5;
+}
+.field-label {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 13px;
+  color: var(--text);
+  min-width: 0;
+}
+.field-hint {
+  font-size: 11.5px;
+  color: var(--text-dim);
+  line-height: 1.4;
+}
+.field-hint.warn {
+  color: var(--status-error);
+}
+.field-control {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.input {
+  font: inherit;
+  font-size: 13px;
+  color: var(--text);
+  background: var(--input-bg);
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  padding: 6px 9px;
+  outline: none;
+  min-width: 0;
+  transition: border-color 120ms, box-shadow 120ms;
+}
+.input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent);
+}
+.input.invalid {
+  border-color: var(--status-error);
+}
+select.input {
+  padding-right: 24px;
+}
+
+.number-input {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.number-input .input {
+  width: 84px;
+}
+.number-input .suffix {
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+.switch {
+  position: relative;
+  width: 40px;
+  height: 22px;
+  border-radius: 11px;
+  border: none;
+  background: var(--line-strong);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 160ms ease;
+  padding: 0;
+}
+.switch .knob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  transition: transform 180ms cubic-bezier(.3, 1.4, .5, 1);
+}
+.switch.on {
+  background: var(--accent);
+}
+.switch.on .knob {
+  transform: translateX(18px);
+}
+.switch:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.color-choice {
+  display: inline-flex;
+  gap: 6px;
+}
+.color-option {
+  font: inherit;
+  font-size: 12.5px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px 4px 5px;
+  border-radius: 999px;
+  border: 1.5px solid var(--line-strong);
+  background: var(--card-bg);
+  color: var(--text);
+  cursor: pointer;
+}
+.color-option.selected {
+  border-color: var(--text);
+}
+.color-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1.5px solid #111;
+}
+.color-option.white .color-dot {
+  background: #fff;
+}
+.color-option.amu .color-dot {
+  background: #279634;
+}
+/* 亜夢の画面の色: 緑の丸に選んだ色の縁 */
+.color-option.amu-tone .color-dot {
+  background: #279634;
+  border: 3px solid #ffffff;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25);
+}
+.color-option.amu-tone.black .color-dot {
+  background: #279634;
+  border-color: #111111;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25);
+}
+.color-option.black .color-dot {
+  background: #111;
+  border-color: #fff;
+  box-shadow: 0 0 0 1px #111;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  line-height: 1;
+  padding: 3px 7px;
+  border-radius: 999px;
+  background: var(--chip);
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+.badge--info {
+  background: color-mix(in srgb, var(--status-thinking) 18%, transparent);
+  color: var(--status-thinking);
+}
+.badge--warn {
+  background: color-mix(in srgb, var(--status-waiting) 22%, transparent);
+  color: color-mix(in srgb, var(--status-waiting) 70%, var(--text));
+}
+.badge--danger {
+  background: color-mix(in srgb, var(--status-error) 18%, transparent);
+  color: var(--status-error);
+}
+.badge--ok {
+  background: color-mix(in srgb, var(--status-success) 18%, transparent);
+  color: color-mix(in srgb, var(--status-success) 75%, var(--text));
+}

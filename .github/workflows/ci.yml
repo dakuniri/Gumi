@@ -1,0 +1,64 @@
+# 型チェック・単体テスト・PC 操作エンジンの動作確認 (push と pull request ごと)
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - name: Build
+        run: npm run build
+
+  macos:
+    runs-on: macos-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - name: Build main process
+        run: npm run build:electron
+
+      # CI 用: Electron にアクセシビリティと画面収録の許可を与えてみる (できない環境では該当の確認が SKIP になるだけ)
+      - name: Grant TCC permissions to Electron (best effort)
+        continue-on-error: true
+        run: |
+          APP="$PWD/node_modules/electron/dist/Electron.app"
+          BIN="$APP/Contents/MacOS/Electron"
+          NOW=$(date +%s)
+          for DB in "/Library/Application Support/com.apple.TCC/TCC.db" "$HOME/Library/Application Support/com.apple.TCC/TCC.db"; do
+            for SVC in kTCCServiceAccessibility kTCCServiceScreenCapture kTCCServicePostEvent; do
+              sudo sqlite3 "$DB" "INSERT OR REPLACE INTO access (service, client, client_type, auth_value, auth_reason, auth_version, indirect_object_identifier, flags, last_modified) VALUES ('$SVC', 'com.github.Electron', 0, 2, 4, 1, 'UNUSED', 0, $NOW);" || true
+              sudo sqlite3 "$DB" "INSERT OR REPLACE INTO access (service, client, client_type, auth_value, auth_reason, auth_version, indirect_object_identifier, flags, last_modified) VALUES ('$SVC', '$BIN', 1, 2, 4, 1, 'UNUSED', 0, $NOW);" || true
+            done
+          done
+
+      - name: Open a test app (TextEdit)
+        run: |
+          open -a TextEdit
+          sleep 3
+
+      - name: System check (CoreGraphics / Accessibility / capture / input)
+        run: npx electron dist-electron/system-check.cjs --input

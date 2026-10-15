@@ -1,0 +1,190 @@
+:root {
+  --orb-bg: #ffffff;
+  --orb-fg: #111111;
+  --core-bg: #ffffff;
+  --core-fg: #111111;
+  --accent: #111111;
+  --accent-soft: rgba(0, 0, 0, 0.06);
+  --button: #111111;
+  --button-hover: #333333;
+  --button-text: #ffffff;
+  --status-thinking: #111111;
+  --status-working: #111111;
+  --status-success: #111111;
+  --status-error: #111111;
+  --status-waiting: #111111;
+
+  --text: #111111;
+  --text-dim: #6b6b6b;
+  --line: rgba(0, 0, 0, 0.08);
+  --line-strong: rgba(0, 0, 0, 0.18);
+  --chip: rgba(0, 0, 0, 0.05);
+  --panel-bg: #ffffff;
+  --card-bg: #fafafa;
+  --input-bg: #ffffff;
+  --page-bg: #f4f4f4;
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  --text: #f2f2f2;
+  --text-dim: #9a9a9a;
+  --line: rgba(255, 255, 255, 0.09);
+  --line-strong: rgba(255, 255, 255, 0.2);
+  --chip: rgba(255, 255, 255, 0.07);
+  --panel-bg: #111111;
+  --card-bg: #1a1a1a;
+  --input-bg: #0b0b0b;
+  --page-bg: #0b0b0b;
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  height: 100%;
+}
+
+body {
+  font-family: 'Segoe UI', 'Yu Gothic UI', 'Meiryo UI', 'Hiragino Sans', sans-serif;
+  font-size: 13px;
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 円と AI カーソルは背景透明のウィンドウ */
+body[data-page='face'],
+body[data-page='cursor'] {
+  background: transparent;
+  overflow: hidden;
+  user-select: none;
+}
+body[data-page='settings'] {
+  background: var(--page-bg);
+}
+
+.face-root {
+  width: 100vw;
+  height: 100vh;
+  touch-action: none;
+}
+
+/* --- ボタン --- */
+.btn {
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 10px;
+  border: 1px solid var(--line-strong);
+  background: var(--card-bg);
+  color: var(--text);
+  padding: 7px 12px;
+  cursor: pointer;
+  transition: background 120ms, border-color 120ms, transform 80ms;
+  white-space: nowrap;
+}
+.btn:hover:not(:disabled) {
+  border-color: var(--button);
+}
+.btn:active:not(:disabled) {
+  transform: translateY(1px);
+}
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.btn-primary {
+  background: var(--button);
+  border-color: var(--button);
+  color: var(--button-text);
+}
+.btn-primary:hover:not(:disabled) {
+  background: var(--button-hover);
+}
+.btn-danger {
+  background: var(--panel-bg);
+  border: 1.5px solid var(--text);
+  color: var(--text);
+}
+.btn-danger:hover:not(:disabled) {
+  background: var(--text);
+  color: var(--panel-bg);
+}
+.btn-danger-outline {
+  color: var(--text);
+  border-color: var(--text);
+  background: transparent;
+}
+.btn-ghost {
+  background: transparent;
+  border-color: transparent;
+  color: var(--text-dim);
+}
+.btn-small {
+  font-size: 12px;
+  padding: 4px 9px;
+  border-radius: 8px;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--line-strong);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.no-anim *,
+.no-anim *::before,
+.no-anim *::after {
+  transition-duration: 60ms !important;
+}
+
+/* --- お知らせ帯 / アイコンボタン (設定画面) --- */
+.banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: space-between;
+  font-size: 12.5px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  line-height: 1.45;
+  border: 1px solid var(--line-strong);
+  background: var(--card-bg);
+}
+.banner.danger {
+  border-color: var(--text);
+  font-weight: 600;
+}
+.icon-btn {
+  border: none;
+  background: transparent;
+  color: var(--text-dim);
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.icon-btn:hover {
+  background: var(--chip);
+  color: var(--text);
+}

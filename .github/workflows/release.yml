@@ -1,0 +1,83 @@
+# v から始まるタグ (例: v0.3.0) を push すると、Windows と macOS のインストーラーを作り、
+# 下書きの GitHub Release に添付する。内容を確認してから手動で公開する。
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Build installer
+        run: npm run dist
+        env:
+          # コード署名用の証明書は使わない
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows
+          path: release/Gumi-Setup-*.exe
+          if-no-files-found: error
+
+  macos:
+    runs-on: macos-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Package dmg (arm64 / x64, ad-hoc signed)
+        run: npx electron-builder --mac --arm64 --x64 --publish never
+        env:
+          # 開発者証明書は使わない (afterPack でアドホック署名する)
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+      - name: Verify signature and bundled native modules
+        run: |
+          for APP in release/mac*/Gumi.app; do
+            codesign --verify --deep --strict "$APP"
+            /usr/libexec/PlistBuddy -c 'Print :LSUIElement' "$APP/Contents/Info.plist"
+            ls "$APP/Contents/Resources/app.asar.unpacked/node_modules/koffi/build/koffi/"
+          done
+      - run: node scripts/check-artifact-size.mjs release 500
+      - uses: actions/upload-artifact@v4
+        with:
+          name: macos
+          path: release/*.dmg
+          if-no-files-found: error
+
+  draft-release:
+    needs: [windows, macos]
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+      - name: Create draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          ls -la dist
+          gh release create "$TAG" dist/* --repo "$GITHUB_REPOSITORY" --draft --title "Gumi $TAG" --generate-notes
